@@ -24,4 +24,22 @@ class EpisodeXAPI < Sinatra::Base
     flag
   end
 
+  get '/register' do
+    erb :register
+  end
+
+  post '/register' do
+    begin
+      if (params[:password] == params[:second_password])
+        new_password = BCrypt::Password.create(params[:password])
+        User.create(:email => params[:email], :hashed_password => new_password)
+        redirect '/'
+      else
+        erb :passwords_not_match
+      end
+    rescue
+      erb :name_taken
+    end
+  end
+
 end

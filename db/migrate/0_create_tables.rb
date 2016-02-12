@@ -11,8 +11,11 @@ class CreateTables < ActiveRecord::Migration
       #basic attributes
       t.string :user
       t.string :name
+      t.string :db_id
       t.string :season
       t.string :episode
+      t.string :next_episodes
+      t.string :pic
     end
     add_index :tv_shows, :user
   end

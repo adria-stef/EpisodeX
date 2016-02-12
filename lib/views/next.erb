@@ -1,0 +1,30 @@
+<p>Next</p>
+<table style="width:100%">
+  <caption>My Shows</caption>
+  <% shows.each do |show| %>
+
+    <p><%= show["name"] %></p>
+    <% if TvShows.where(:name => show["name"]).first.next_episodes.to_i > 0 %>
+      <p>
+        <form action="/watchNext/<%= show["name"] %> " method="post">
+          <input type="submit" value="Watch NEXT!">
+        </form>
+      </p>
+    <% else %>
+       <p>No new episodes yet!</p>
+    <% end %>
+
+    <% name = show["name"] %>
+    <% id = TvShows.where(:name => name).first.db_id %>
+
+    <% episodes = next_episodes(Tmdb::TV.detail(id), name, id) %>
+
+    <% episodes.each do |episode| %>
+    <p>Season: <%= episode["season_number"] %> Episode:<%= episode["episode_number"] %></p>
+    <p><%= episode["name"] %></p>
+    <p><%= episode %></p>
+    <% end %>
+
+  <% end %>
+
+</table>

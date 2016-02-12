@@ -5,7 +5,7 @@ gem 'sqlite3'
 gem 'sinatra', require: false
 gem 'bcrypt'
 gem 'themoviedb'
-gem 'shotgun'
+gem 'rack-protection'
 
 group :test do
   gem 'rack-test', require: false

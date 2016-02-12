@@ -33,53 +33,66 @@
 
   <body>
 
-    <form action="/search" method="get">
-      <input class="btn btn-primary btn-lg btn-block" type="submit" value="Search for New Shows!">
-    </form>
+    <h1><%= show['name'] %></h1>
 
-    <br><br><br>
+    <br>
 
+    <% puts show['in_production'] %>
+    <% if show['in_production'] %>
+    <input class="btn btn-success" value="Currently running" disabled>
+    <% else %>
+    <input class="btn btn-danger" value="No longer running"  disabled>
+    <% end %>
+
+    <h3>Overview</h3>
+    <h4><%= show['overview'] %></h4>
+
+    <br>
+
+    <h3>Number of Seasons:</h3>
+    <h4><%= show['number_of_seasons'] %></h4>
+
+    <br>
+
+    <% if TvShows.where(:name => show["name"]).first.next_episodes.to_i > 0 %>
+      <p>
+        <form action="/watchNext/<%= show["name"] %> " method="post">
+          <input class="btn btn-success" type="submit" value="Watch NEXT!">
+        </form>
+      </p>
+    <% else %>
+       <<input class="btn btn-danger"value="No episodes to watch :(">
+    <% end %>
+
+    <br>
+
+    <h3>Unwatched Episodes:</h3>
     <table class="table table-striped">
       <thead>
         <tr>
-          <th></th>
-          <th>Tv Show</th>
-          <th>Last Watched</th>
-          <th>Next Episode</th>
-          <th>Info</th>
-          <th>Remove show</th>
+          <th><h4>Picture</h4></th>
+          <th><h4>Episode</h4></th>
+          <th><h4>Name</h4></th>
+          <th><h4>Air Date</h4></th>
+          <th><h4>Overview</h4></th>
+          <th><h4>Rate</h4></th>
         </tr>
       </thead>
       <tbody>
-        <% shows.each do |show| %>
-          <tr>
-            <% img_src = "https://image.tmdb.org/t/p/w500#{show.pic}" %>
-            <td><img src="<%= img_src %>" alt="<%= show.name %>" height="80" width="50"></td>
-            <td><%=show.name %></td>
-            <td><%=show.season %> season <%=show.episode %> episode</td>
-            <td>
-              <% if TvShows.where(:name => show.name).first.next_episodes.to_i > 0 %>
-                <form action="/watchNext/<%=show.name %> " method="post">
-                  <input class="btn btn-success" type="submit" value="Watch NEXT!">
-                </form>
-              <% else %>
-                 <button class="btn btn-success disabled" type="button">No new episodes :(</button>
-               <% end %>
-            </td>
-            <td>
-              <form action="/viewShow/<%=show.name %> " method="get">
-                <input class="btn btn-info" type="submit" value="Info!">
-              </form>
-            </td>
-            <td>
-              <form action="/removeShow/<%=show.name %> " method="delete">
-                <input class="btn btn-danger" type="submit" value="Remove Show!">
-              </form>
-            </td>
-          </tr>
+        <% episodes.each_with_index do |episode| %>
+        <tr>
+          <% img_src = "http://image.tmdb.org/t/p/w600/#{episode["still_path"]}" %>
+          <td><img src="<%= img_src %>" alt="<%= episode["name"] %>" height="100" width="80"></td>
+          <td><h4>(<%= episode["season_number"] %> - <%= episode["episode_number"] %>)</h4></td>
+          <td><h4><%= episode["name"] %></td></h4>
+          <td><h4><%= episode["air_date"] %></td></h4>
+          <td><h4><%= episode["overview"] %></td></h4>
+          <td><h4><%= episode["vote_average"] %></td></h4>
+        </tr>
         <% end %>
       </tbody>
     </table>
+
 
     <!-- Le javascript
     ================================================== -->

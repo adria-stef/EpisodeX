@@ -11,6 +11,7 @@ ActiveRecord::Base.establish_connection(config)
 require 'models/user'
 require 'models/tv_shows'
 require 'bcrypt'
+require "net/http"
 
 require 'themoviedb'
 Tmdb::Api.key('562d0cb5578d9c514772ea826b3dcf60')

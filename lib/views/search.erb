@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -33,53 +34,52 @@
 
   <body>
 
-    <form action="/search" method="get">
-      <input class="btn btn-primary btn-lg btn-block" type="submit" value="Search for New Shows!">
+    <form action="/searchShows" method="get" class="form-inline">
+      <div class="form-group">
+        <label for="exampleInputName2">Tv Show</label>
+        <input name="search" type="text" class="form-control" id="exampleInputName2" placeholder="Tv Show Name">
+      </div>
+      <button type="submit" class="btn btn-success">Search</button>
     </form>
 
-    <br><br><br>
+    <br>
 
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Tv Show</th>
-          <th>Last Watched</th>
-          <th>Next Episode</th>
-          <th>Info</th>
-          <th>Remove show</th>
-        </tr>
-      </thead>
-      <tbody>
+    <% if defined? shows and shows != nil and shows.size > 0%>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Air Date</th>
+            <th>Popularity</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
         <% shows.each do |show| %>
           <tr>
-            <% img_src = "https://image.tmdb.org/t/p/w500#{show.pic}" %>
-            <td><img src="<%= img_src %>" alt="<%= show.name %>" height="80" width="50"></td>
-            <td><%=show.name %></td>
-            <td><%=show.season %> season <%=show.episode %> episode</td>
+            <% img_src = "https://image.tmdb.org/t/p/w500#{show["poster_path"]}" %>
+            <td><img src="<%= img_src %>" alt="<%= show["name"] %>" height="80" width="50"></td>
+            <td><%=show["name"] %></td>
+            <td><%=show["first_air_date"] %></td>
+            <td><%=show["popularity"] %></td>
             <td>
-              <% if TvShows.where(:name => show.name).first.next_episodes.to_i > 0 %>
-                <form action="/watchNext/<%=show.name %> " method="post">
-                  <input class="btn btn-success" type="submit" value="Watch NEXT!">
-                </form>
+              <% if my_shows.any? {|my_show| my_show["name"] == show["name"]}%>
+              <form>
+                <textarea style="visibility: hidden"></textarea>
+                <input class="btn btn-danger" disabled type="submit" value="Already in my shows!">
+              </form>
               <% else %>
-                 <button class="btn btn-success disabled" type="button">No new episodes :(</button>
-               <% end %>
-            </td>
-            <td>
-              <form action="/viewShow/<%=show.name %> " method="get">
-                <input class="btn btn-info" type="submit" value="Info!">
-              </form>
-            </td>
-            <td>
-              <form action="/removeShow/<%=show.name %> " method="delete">
-                <input class="btn btn-danger" type="submit" value="Remove Show!">
-              </form>
+                <form action="/addShow" method="post">
+                  <textarea style="visibility: hidden" name="name" placeholder="New Show&hellip;"><%=show["name"] %></textarea>
+                  <input class="btn btn-success" type="submit" value="Add to My Shows!">
+                </form>
+              <% end %>
             </td>
           </tr>
         <% end %>
-      </tbody>
-    </table>
+      </table>
+    <% end %>
 
     <!-- Le javascript
     ================================================== -->
