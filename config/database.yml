@@ -1,0 +1,7 @@
+---
+  test:
+    adapter: sqlite3
+    database: db/episodex_test
+  development:
+    adapter: sqlite3
+    database: db/episodex_test

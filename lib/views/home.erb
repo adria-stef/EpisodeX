@@ -1,0 +1,19 @@
+<table style="width:100%">
+  <caption>My Shows</caption>
+  <tr>
+    <th>Name</th>
+    <th>Last Watched</th>
+    <th>Next</th>
+  </tr>
+  <% @shows.each do |show| %>
+    <tr>
+      <td><%=show.name %></td>
+      <td><%=show.season %> season <%=show.episode %> episode</td>
+      <td>
+        <form action="/watchNext/<%=show.name %> " method="post">
+          <input type="submit" value="Watch NEXT!">
+        </form>
+      </td>
+    </tr>
+  <% end %>
+</table>
