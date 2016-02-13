@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
+    <title>Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -12,8 +12,10 @@
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
       body {
-        padding-top: 60px;
+        padding-top: 20px;
         padding-bottom: 40px;
+        padding-left: 40px;
+        padding-right: 40px;
       }
     </style>
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
@@ -32,6 +34,16 @@
   </head>
 
   <body>
+
+    <div class="masthead">
+      <ul class="nav nav-pills pull-right">
+        <li class="active"><a href="/">Home</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+      <h3 class="muted">Hi, <%= session[:username]%>!</h3>
+    </div>
+
+    <hr>
 
     <form action="/search" method="get">
       <input class="btn btn-primary btn-lg btn-block" type="submit" value="Search for New Shows!">
