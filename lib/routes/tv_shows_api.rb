@@ -11,15 +11,18 @@ class EpisodeXAPI < Sinatra::Base
   end
 
   get '/next' do
+    session!
     shows = TvShows.where(:user => session[:username]).all #:order => :name.desc
     erb :next, :locals => {:shows => shows}
   end
 
   get '/search' do
+    session!
     erb :search
   end
 
   get '/searchShows' do
+    session!
     name = params[:search]
     search = Tmdb::Search.new
     search.resource('tv')
@@ -30,8 +33,9 @@ class EpisodeXAPI < Sinatra::Base
   end
 
   get '/findShow/:id' do
-      show = Tmdb::TV.detail(params["id"].to_i)
-      show.to_json
+    session!
+    show = Tmdb::TV.detail(params["id"].to_i)
+    show.to_json
   end
 
   def next_episodes(show, name, id)
@@ -60,11 +64,13 @@ class EpisodeXAPI < Sinatra::Base
   end
 
   get '/viewShow/:name' do
+    session!
     name = params[:name]
     redirect "/view?name=#{name}"
   end
 
   get '/view' do
+    session!
     name = params[:name]
     id = TvShows.where(:name => name).first.db_id
     show = Tmdb::TV.detail(id)
@@ -102,6 +108,7 @@ class EpisodeXAPI < Sinatra::Base
   end
 
   post '/addShow' do
+    session!
     checked_name = check_name(params[:name])
     id = find_id(checked_name)
     name = get_name(id)
@@ -118,10 +125,12 @@ class EpisodeXAPI < Sinatra::Base
   end
 
   get '/updateShow' do
+    session!
     TvShows.where(:user => session[:username]).where(:name => "arrow").first.update_attributes(:season => "5", :episode => "6")
   end
 
   post '/watchNext/:name' do
+    session!
     # TODO
     name = params[:name]
     id = TvShows.where(:user => session[:username]).where(:name => name).first.db_id
@@ -140,6 +149,7 @@ class EpisodeXAPI < Sinatra::Base
 
  # TODO
   get '/removeShow/:name' do
+    session!
     TvShows.where(:user => session[:username]).where(:name => params[:name]).first.delete
     redirect '/'
   end
