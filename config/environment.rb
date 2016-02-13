@@ -13,6 +13,7 @@ require 'models/tv_shows'
 require 'bcrypt'
 require "net/http"
 require 'sinatra/session'
+require 'sinatra/base'
 
 require 'themoviedb'
 Tmdb::Api.key('562d0cb5578d9c514772ea826b3dcf60')

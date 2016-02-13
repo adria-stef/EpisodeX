@@ -1,7 +1,4 @@
 require './test/test_helper'
-require 'rack/test'
-require 'sinatra/base'
-require 'api'
 
 class APITest < MiniTest::Unit::TestCase
   include Rack::Test::Methods
@@ -11,15 +8,41 @@ class APITest < MiniTest::Unit::TestCase
     EpisodeXAPI
   end
 
-  # TODO
-  def test_hello_world
-    # temporarily do
-      new_password = BCrypt::Password.create("pass")
+  def test_create_initial_user
+    users = User.all.size
+      if(users < 1)
+        new_password = BCrypt::Password.create("pass")
 
-      User.create(:email => "some_email", :hashed_password => new_password)
-      get '/users'
-      expected = ""
-      assert_equal expected, last_response.body
+        User.create(:email => "init", :hashed_password => new_password)
+        users = User.all.size
+        expected = 1
+        assert_equal expected, users
+      end
     end
-  # end
+
+  def test_root_unathorized
+      get "#{ENV["TEST_URL"]}/logout"
+      get "#{ENV["TEST_URL"]}/"
+      expected = 302
+      assert_equal expected, last_response.status
+  end
+
+  def test_login
+      get "#{ENV["TEST_URL"]}/login"
+      expected = 200
+      assert_equal expected, last_response.status
+  end
+
+  def test_register
+      get "#{ENV["TEST_URL"]}/register"
+      expected = 200
+      assert_equal expected, last_response.status
+  end
+
+  def test_next_unathorized
+    get "#{ENV["TEST_URL"]}/next"
+    expected = 302
+    assert_equal expected, last_response.status
+  end
+
 end

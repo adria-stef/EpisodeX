@@ -1,5 +1,3 @@
-require 'sinatra/base'
-require 'sinatra/session'
 class EpisodeXAPI < Sinatra::Base
   include BCrypt
 
@@ -42,7 +40,7 @@ class EpisodeXAPI < Sinatra::Base
 
   def check_password(pass, second_pass)
     equal = (pass == second_pass)
-    long_enough = (pass.length > 4)
+    long_enough = (pass.length > 3)
 
     equal and long_enough
   end
