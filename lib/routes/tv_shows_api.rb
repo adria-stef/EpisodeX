@@ -1,9 +1,10 @@
+# TV Shows API
 class EpisodeXAPI < Sinatra::Base
 
   get '/' do
     session!
     shows = TvShows.where(:user => session[:username]).all #:order => :name.desc
-    erb :home, :locals => {:shows => shows}
+    erb :home, :locals => { :shows => shows }
   end
 
   def my_shows
@@ -13,7 +14,7 @@ class EpisodeXAPI < Sinatra::Base
   get '/next' do
     session!
     shows = TvShows.where(:user => session[:username]).all #:order => :name.desc
-    erb :next, :locals => {:shows => shows}
+    erb :next, :locals => { :shows => shows }
   end
 
   get '/search' do
@@ -29,34 +30,36 @@ class EpisodeXAPI < Sinatra::Base
     search.query(name)
     shows = search.fetch
 
-    erb :search, :locals => {:shows => shows}
+    erb :search, :locals => { :shows => shows }
   end
 
   get '/findShow/:id' do
     session!
-    show = Tmdb::TV.detail(params["id"].to_i)
+    show = Tmdb::TV.detail(params['id'].to_i)
     show.to_json
   end
 
   def next_episodes(show, name, id)
     db_show = TvShows.where(:user => session[:username]).where(:name => name).first
-    if db_show != nil
+
+  if !db_show.nil?
       last_season = TvShows.where(:user => session[:username]).where(:name => name).first.season
       last_episode = TvShows.where(:user => session[:username]).where(:name => name).first.episode
     else
       last_season = 1
       last_episode = 1
     end
-    current_season = Tmdb::Season.detail(id, last_season)
-    if current_season["episodes"] != nil
-      episodes = current_season["episodes"][last_episode.to_i, current_season["episodes"].length]
 
-      number_of_seasons = show["number_of_seasons"]
-      ((last_season.to_i + 1)..number_of_seasons.to_i).each{ |season_number|
+    current_season = Tmdb::Season.detail(id, last_season)
+    if !current_season['episodes'].nil?
+      episodes = current_season['episodes'][last_episode.to_i, current_season['episodes'].length]
+
+      number_of_seasons = show['number_of_seasons']
+      ((last_season.to_i + 1)..number_of_seasons.to_i).each do |season_number|
         season = Tmdb::Season.detail(id, season_number)
-        new_episodes = season["episodes"][0, season["episodes"].length]
+        new_episodes = season['episodes'][0, season['episodes'].length]
         episodes.concat(new_episodes)
-      }
+      end
       episodes
     else
       nil
@@ -77,14 +80,14 @@ class EpisodeXAPI < Sinatra::Base
 
     episodes = next_episodes(show, name, id)
 
-    erb :show, :locals => {:show => show, :episodes => episodes}
+    erb :show, :locals => { :show => show, :episodes => episodes }
   end
 
   def find_id(name)
     search = Tmdb::Search.new
     search.resource('tv')
     search.query(name)
-    if search.fetch != nil and search.fetch.first != nil
+    if !search.fetch.nil? and !search.fetch.first.nil?
       search.fetch.first['id']
     else
       0
@@ -94,16 +97,15 @@ class EpisodeXAPI < Sinatra::Base
   # TODO
   def invalid_name(name, id)
     show = Tmdb::TV.detail(id)
-    !(name.downcase == show["name"].downcase || ("the " << name.downcase) == show["name"].downcase)
+    !(name.downcase == show['name'].downcase || ('the ' << name.downcase) == show['name'].downcase)
   end
 
   def get_name(id)
     show = Tmdb::TV.detail(id)
-    show["name"]
+    show['name']
   end
 
   def check_name(name)
-    # TODO check for malicious input
     name.strip
   end
 
@@ -118,8 +120,7 @@ class EpisodeXAPI < Sinatra::Base
     if id < 1 or invalid_name(name, id)
       erb :not_found
     else
-      # better use name from id
-      TvShows.create(:user => session[:username], :name => name, :db_id => id, :season => "1", :episode => "1", :next_episodes => episodes.size.to_s, :pic => show["poster_path"])
+      TvShows.create(:user => session[:username], :name => name, :db_id => id, :season => "1", :episode => "1", :next_episodes => episodes.size.to_s, :pic => show['poster_path'])
       redirect '/'
     end
   end
@@ -137,8 +138,8 @@ class EpisodeXAPI < Sinatra::Base
     show = Tmdb::TV.detail(id)
 
     episodes = next_episodes(show, name, id)
-    season_number = episodes.first["season_number"]
-    episode_number = episodes.first["episode_number"]
+    season_number = episodes.first['season_number']
+    episode_number = episodes.first['episode_number']
 
     episodes_left = episodes.size - 2
 
@@ -147,7 +148,6 @@ class EpisodeXAPI < Sinatra::Base
     redirect back
   end
 
- # TODO
   get '/removeShow/:name' do
     session!
     TvShows.where(:user => session[:username]).where(:name => params[:name]).first.delete

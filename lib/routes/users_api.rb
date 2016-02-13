@@ -1,3 +1,4 @@
+# Users API
 class EpisodeXAPI < Sinatra::Base
   include BCrypt
 
@@ -14,14 +15,14 @@ class EpisodeXAPI < Sinatra::Base
     end
   end
 
-  post "/login" do
-    User.all.each{ |user|
-      if (params[:email] == user.email && BCrypt::Password.new(user.hashed_password) == params[:password])
+  post '/login' do
+    User.all.each do |user|
+      if params[:email] == user.email && BCrypt::Password.new(user.hashed_password) == params[:password]
         session_start!
         session[:username] = params[:email]
-        redirect "/"
+        redirect '/'
       end
-    }
+    end
     erb :login_fail
   end
 
@@ -42,10 +43,10 @@ class EpisodeXAPI < Sinatra::Base
     equal = (pass == second_pass)
     long_enough = (pass.length > 3)
 
-    equal and long_enough
+    equal && long_enough
   end
 
-  post "/register" do
+  post '/register' do
 
     begin
       if (params[:password] == params[:second_password] and params[:password].length > 4)
@@ -77,6 +78,5 @@ class EpisodeXAPI < Sinatra::Base
     @password = Password.create(new_password)
     self.password_hash = @password
   end
-
 
 end

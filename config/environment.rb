@@ -11,7 +11,7 @@ ActiveRecord::Base.establish_connection(config)
 require 'models/user'
 require 'models/tv_shows'
 require 'bcrypt'
-require "net/http"
+require 'net/http'
 require 'sinatra/session'
 require 'sinatra/base'
 

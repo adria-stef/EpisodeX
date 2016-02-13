@@ -7,6 +7,7 @@ gem 'sinatra-session'
 gem 'bcrypt'
 gem 'themoviedb'
 gem 'rack-protection'
+gem 'rubocop'
 
 group :test do
   gem 'rack-test', require: false
