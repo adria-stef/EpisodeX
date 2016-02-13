@@ -72,12 +72,31 @@ class EpisodeXAPI < Sinatra::Base
 
   get '/viewShow/:name' do
     name = params[:name]
-    id = TvShows.where(:user => @@current).where(:name => name).first.db_id
+    redirect "/view?name=#{name}"
+  end
+
+  get '/view' do
+    name = params[:name]
+    id = TvShows.where(:name => name).first.db_id
     show = Tmdb::TV.detail(id)
 
     episodes = next_episodes(show, name, id)
 
+    # erb :view_show, :locals => {:show => show, :episodes => episodes}
     erb :show, :locals => {:show => show, :episodes => episodes}
+  end
+
+  get '/boot' do
+    title = params[:title]
+    puts title
+    # name = params[:name]
+    # id = TvShows.where(:user => @@current).where(:name => name).first.db_id
+    # show = Tmdb::TV.detail(id)
+
+    # episodes = next_episodes(show, name, id)
+
+    # erb :name_taken
+    erb :view_show
   end
 
   def find_id(name)

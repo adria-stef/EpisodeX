@@ -61,7 +61,7 @@
         </form>
       </p>
     <% else %>
-       <<input class="btn btn-danger"value="No episodes to watch :(">
+       <input class="btn btn-danger"value="No episodes to watch :(">
     <% end %>
 
     <br>
@@ -79,7 +79,7 @@
         </tr>
       </thead>
       <tbody>
-        <% episodes.each_with_index do |episode| %>
+        <% episodes.each do |episode| %>
         <tr>
           <% img_src = "http://image.tmdb.org/t/p/w600/#{episode["still_path"]}" %>
           <td><img src="<%= img_src %>" alt="<%= episode["name"] %>" height="100" width="80"></td>

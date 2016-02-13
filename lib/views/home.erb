@@ -67,7 +67,8 @@
                <% end %>
             </td>
             <td>
-              <form action="/viewShow/<%=show.name %> " method="get">
+              <% url = "/viewShow/#{show.name}"%>
+              <form action="<%=url%>" method="get">
                 <input class="btn btn-info" type="submit" value="Info!">
               </form>
             </td>

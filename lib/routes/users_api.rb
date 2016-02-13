@@ -38,7 +38,8 @@ class EpisodeXAPI < Sinatra::Base
         erb :passwords_not_match
       end
     rescue
-      erb :name_taken
+      # erb :name_taken
+      erb :view_show
     end
   end
 
