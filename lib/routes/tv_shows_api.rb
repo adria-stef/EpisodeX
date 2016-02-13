@@ -39,6 +39,7 @@ class EpisodeXAPI < Sinatra::Base
     show.to_json
   end
 
+  # TODO separate business logic
   def next_episodes(show, name, id)
     db_show = TvShows.where(:user => session[:username]).where(:name => name).first
 

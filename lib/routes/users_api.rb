@@ -19,6 +19,7 @@ class EpisodeXAPI < Sinatra::Base
     User.all.each do |user|
       if params[:email] == user.email && BCrypt::Password.new(user.hashed_password) == params[:password]
         session_start!
+        # TODO use id in session
         session[:username] = params[:email]
         redirect '/'
       end
