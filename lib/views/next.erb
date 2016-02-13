@@ -1,30 +1,119 @@
-<p>Next</p>
-<table style="width:100%">
-  <caption>My Shows</caption>
-  <% shows.each do |show| %>
 
-    <p><%= show["name"] %></p>
-    <% if TvShows.where(:name => show["name"]).first.next_episodes.to_i > 0 %>
-      <p>
-        <form action="/watchNext/<%= show["name"] %> " method="post">
-          <input type="submit" value="Watch NEXT!">
-        </form>
-      </p>
-    <% else %>
-       <p>No new episodes yet!</p>
-    <% end %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Next</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <% name = show["name"] %>
-    <% id = TvShows.where(:name => name).first.db_id %>
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+    </style>
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
 
-    <% episodes = next_episodes(Tmdb::TV.detail(id), name, id) %>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
 
-    <% episodes.each do |episode| %>
-    <p>Season: <%= episode["season_number"] %> Episode:<%= episode["episode_number"] %></p>
-    <p><%= episode["name"] %></p>
-    <p><%= episode %></p>
-    <% end %>
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="assets/ico/favicon.png">
+  </head>
 
-  <% end %>
+  <body>
 
-</table>
+    <div class="masthead">
+      <ul class="nav nav-pills pull-right">
+        <li class="active"><a href="/">Home</a></li>
+        <li><a href="/next">Next</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+      <h3 class="muted">Hi, <%= session[:username]%>!</h3>
+    </div>
+
+    <hr>
+
+    <h3>Next:</h3>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><h4>Picture</h4></th>
+          <th><h4>Episode</h4></th>
+          <th><h4>Name</h4></th>
+          <th><h4>Air Date</h4></th>
+          <th><h4>Overview</h4></th>
+          <th><h4>Rate</h4></th>
+        </tr>
+      </thead>
+      <tbody>
+          <% shows.each do |show| %>
+
+          <tr>
+            <% img_src = "https://image.tmdb.org/t/p/w500#{show.pic}" %>
+            <td><img src="<%= img_src %>" alt="<%= show.name %>" height="160" width="100"></td>
+            <td></td>
+            <td><h4><%=show.name %></h4></td>
+            <td></td>
+            <td>
+              <% if TvShows.where(:name => show.name).first.next_episodes.to_i > 0 %>
+                <form action="/watchNext/<%=show.name %> " method="post">
+                  <input class="btn btn-success" type="submit" value="Watch NEXT!">
+                </form>
+              <% else %>
+                 <button class="btn btn-success disabled" type="button">No new episodes :(</button>
+               <% end %>
+            </td>
+            <td><%= show["rate"] %></td>
+          </tr>
+
+          <% name = show["name"] %>
+          <% id = TvShows.where(:name => name).first.db_id %>
+          <% episodes = next_episodes(Tmdb::TV.detail(id), name, id) %>
+          <% episodes.each do |episode| %>
+            <tr>
+              <% img_src = "http://image.tmdb.org/t/p/w600/#{episode["still_path"]}" %>
+              <td><img src="<%= img_src %>" alt="<%= episode["name"] %>" height="100" width="80"></td>
+              <td><h4>(<%= episode["season_number"] %> - <%= episode["episode_number"] %>)</h4></td>
+              <td><h4><%= episode["name"] %></td></h4>
+              <td><h4><%= episode["air_date"] %></td></h4>
+              <td><h4><%= episode["overview"] %></td></h4>
+              <td><h4><%= episode["vote_average"] %></td></h4>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>

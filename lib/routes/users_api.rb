@@ -40,20 +40,35 @@ class EpisodeXAPI < Sinatra::Base
     end
   end
 
+  def check_password(pass, second_pass)
+    equal = (pass == second_pass)
+    long_enough = (pass.length > 4)
+
+    equal and long_enough
+  end
+
   post "/register" do
 
     begin
-      if (params[:password] == params[:second_password])
+      if (params[:password] == params[:second_password] and params[:password].length > 4)
         new_password = BCrypt::Password.create(params[:password])
         User.create(:email => params[:email], :hashed_password => new_password)
         redirect '/login'
       else
-        erb :passwords_not_match
+        redirect '/passFail'
       end
     rescue
-      erb :name_taken
+      redirect '/nameTaken'
     end
     redirect "/register"
+  end
+
+  get '/passFail' do
+    erb :password_fail
+  end
+
+  get '/nameTaken' do
+    erb :name_taken
   end
 
   def password
