@@ -1,28 +1,17 @@
 class EpisodeXAPI < Sinatra::Base
 
   get '/' do
-    shows = TvShows.where(:user => @@current).all #:order => :name.desc
+    session!
+    shows = TvShows.where(:user => session[:username]).all #:order => :name.desc
     erb :home, :locals => {:shows => shows}
   end
 
   def my_shows
-    TvShows.where(:user => @@current)
-  end
-
-  get '/myShows' do
-    name = "House"
-    id = TvShows.where(:name => name).first.db_id
-    show = Tmdb::TV.detail(id)
-    show.to_json
-    a=""
-    show.each{|key, value|
-      a << "#{key.upcase} is #{value}" << "\n"
-    }
-    a
+    TvShows.where(:user => session[:username])
   end
 
   get '/next' do
-    shows = TvShows.where(:user => @@current).all #:order => :name.desc
+    shows = TvShows.where(:user => session[:username]).all #:order => :name.desc
     erb :next, :locals => {:shows => shows}
   end
 
@@ -46,10 +35,10 @@ class EpisodeXAPI < Sinatra::Base
   end
 
   def next_episodes(show, name, id)
-    db_show = TvShows.where(:user => @@current).where(:name => name).first
+    db_show = TvShows.where(:user => session[:username]).where(:name => name).first
     if db_show != nil
-      last_season = TvShows.where(:user => @@current).where(:name => name).first.season
-      last_episode = TvShows.where(:user => @@current).where(:name => name).first.episode
+      last_season = TvShows.where(:user => session[:username]).where(:name => name).first.season
+      last_episode = TvShows.where(:user => session[:username]).where(:name => name).first.episode
     else
       last_season = 1
       last_episode = 1
@@ -82,28 +71,14 @@ class EpisodeXAPI < Sinatra::Base
 
     episodes = next_episodes(show, name, id)
 
-    # erb :view_show, :locals => {:show => show, :episodes => episodes}
     erb :show, :locals => {:show => show, :episodes => episodes}
-  end
-
-  get '/boot' do
-    title = params[:title]
-    puts title
-    # name = params[:name]
-    # id = TvShows.where(:user => @@current).where(:name => name).first.db_id
-    # show = Tmdb::TV.detail(id)
-
-    # episodes = next_episodes(show, name, id)
-
-    # erb :name_taken
-    erb :view_show
   end
 
   def find_id(name)
     search = Tmdb::Search.new
     search.resource('tv')
     search.query(name)
-    if search.fetch.first != nil
+    if search.fetch != nil and search.fetch.first != nil
       search.fetch.first['id']
     else
       0
@@ -137,19 +112,19 @@ class EpisodeXAPI < Sinatra::Base
       erb :not_found
     else
       # better use name from id
-      TvShows.create(:user => @@current, :name => name, :db_id => id, :season => "1", :episode => "1", :next_episodes => episodes.size.to_s, :pic => show["poster_path"])
+      TvShows.create(:user => session[:username], :name => name, :db_id => id, :season => "1", :episode => "1", :next_episodes => episodes.size.to_s, :pic => show["poster_path"])
       redirect '/'
     end
   end
 
   get '/updateShow' do
-    TvShows.where(:user => @@current).where(:name => "arrow").first.update_attributes(:season => "5", :episode => "6")
+    TvShows.where(:user => session[:username]).where(:name => "arrow").first.update_attributes(:season => "5", :episode => "6")
   end
 
   post '/watchNext/:name' do
     # TODO
     name = params[:name]
-    id = TvShows.where(:user => @@current).where(:name => name).first.db_id
+    id = TvShows.where(:user => session[:username]).where(:name => name).first.db_id
     show = Tmdb::TV.detail(id)
 
     episodes = next_episodes(show, name, id)
@@ -158,14 +133,14 @@ class EpisodeXAPI < Sinatra::Base
 
     episodes_left = episodes.size - 2
 
-    TvShows.where(:user => @@current).where(:name => name).
+    TvShows.where(:user => session[:username]).where(:name => name).
     first.update_attributes(:season => season_number.to_s, :episode => episode_number.to_s, :next_episodes => episodes_left.to_s)
     redirect back
   end
 
  # TODO
   get '/removeShow/:name' do
-    TvShows.where(:user => @@current).where(:name => params[:name]).first.delete
+    TvShows.where(:user => session[:username]).where(:name => params[:name]).first.delete
     redirect '/'
   end
 

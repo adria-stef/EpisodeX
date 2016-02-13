@@ -41,6 +41,8 @@ GEM
       rack (~> 1.5)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
+    sinatra-session (1.0.0)
+      sinatra (>= 1.0)
     sqlite3 (1.3.11)
     themoviedb (1.0.1)
       httparty
@@ -61,6 +63,7 @@ DEPENDENCIES
   rack-protection
   rack-test
   sinatra
+  sinatra-session
   sqlite3
   themoviedb
 

@@ -15,6 +15,7 @@ class APITest < MiniTest::Unit::TestCase
   def test_hello_world
     # temporarily do
       new_password = BCrypt::Password.create("pass")
+
       User.create(:email => "some_email", :hashed_password => new_password)
       get '/users'
       expected = ""
